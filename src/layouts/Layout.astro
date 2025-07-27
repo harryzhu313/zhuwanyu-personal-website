@@ -1,0 +1,80 @@
+---
+import type { DataEntryMap } from "astro:content";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import "../styles/index.scss";
+import collections, { description, title } from "..";
+// 暂时注释掉 PWA 资产引用
+// import { pwaAssetsHead } from "virtual:pwa-assets/head";
+
+interface Props {
+  collection?: keyof DataEntryMap;
+}
+
+const { collection } = Astro.props;
+const pageTitle = collection
+  ? `${title}・${collections[collection].name}`
+  : title;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{pageTitle}</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1f2229"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- 暂时注释掉 PWA 相关的 meta 标签 -->
+    <!-- {
+      pwaAssetsHead.themeColor && (
+        <meta name="theme-color" content={pwaAssetsHead.themeColor.content} />
+      )
+    }
+    {pwaAssetsHead.links.map((link) => <link {...link} />)}
+    <link rel="manifest" href="/manifest.webmanifest" /> -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={title}
+      href={new URL("rss.xml", Astro.site)}
+    />
+    <link
+      rel="webmention"
+      href="https://webmention.io/tansongchen.com/webmention"
+    />
+    <link rel="pingback" href="https://webmention.io/tansongchen.com/xmlrpc" />
+    <!-- <script src="/src/pwa.ts"></script> -->
+  </head>
+  <body class="has-navbar-fixed-top">
+    <Header collection={collection} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

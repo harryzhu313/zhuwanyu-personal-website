@@ -1,0 +1,304 @@
+---
+import { getCollection } from "astro:content";
+import { fileToImageAsset, fileToUrl } from "notion-astro-loader";
+
+let testResults: {
+  success: boolean;
+  originalUrl: string;
+  localizedUrl: string;
+  error: any;
+  hasPhotos: boolean;
+  photosCount: number;
+  detailedError: {
+    type: string;
+    message: string;
+    stack?: string;
+  } | null;
+  urlAccessible: boolean;
+  httpStatus: string;
+} = {
+  success: false,
+  originalUrl: "",
+  localizedUrl: "",
+  error: null,
+  hasPhotos: false,
+  photosCount: 0,
+  detailedError: null,
+  urlAccessible: false,
+  httpStatus: "",
+};
+
+try {
+  // 1. Get first photo for testing
+  const photos = await getCollection("photos");
+  testResults.hasPhotos = photos && photos.length > 0;
+  testResults.photosCount = photos?.length || 0;
+  
+  if (photos && photos.length > 0) {
+    const firstPhoto = photos[0];
+    
+    if (firstPhoto.data.cover) {
+      // 2. Get original URL
+      testResults.originalUrl = fileToUrl(firstPhoto.data.cover);
+      console.log("🔍 Testing original URL:", testResults.originalUrl);
+      
+      // 3. Check if URL is accessible
+      console.log("🌐 Testing URL accessibility...");
+      try {
+        const response = await fetch(testResults.originalUrl, { method: 'HEAD' });
+        testResults.urlAccessible = response.ok;
+        testResults.httpStatus = `${response.status} ${response.statusText}`;
+        console.log(`📡 URL accessibility: ${testResults.httpStatus}`);
+        console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
+        console.log(`📡 Content-Length: ${response.headers.get('content-length')}`);
+      } catch (fetchError) {
+        console.error("❌ URL不可访问:", fetchError);
+        testResults.httpStatus = "Network Error";
+      }
+      
+      // 4. Try to localize using fileToImageAsset
+      console.log("🔄 Starting fileToImageAsset test...");
+      
+      // Create a custom test that doesn't trigger Astro's image processing
+      try {
+        const imageAsset = await fileToImageAsset(firstPhoto.data.cover);
+        testResults.localizedUrl = imageAsset.src;
+        testResults.success = true;
+        console.log("✅ fileToImageAsset test successful:", testResults.localizedUrl);
+      } catch (fileToImageError) {
+        // This is the actual fileToImageAsset error, not Astro's image processing error
+        console.error("❌ fileToImageAsset specific error:", fileToImageError);
+        throw fileToImageError;
+      }
+      
+    } else {
+      testResults.error = "First photo has no cover image";
+    }
+  } else {
+    testResults.error = "No photo data found";
+  }
+  
+} catch (error) {
+  testResults.error = error;
+  if (error instanceof Error) {
+    testResults.detailedError = {
+      type: error.constructor.name,
+      message: error.message,
+      stack: error.stack,
+    };
+    console.error("❌ Test failed:", error);
+    console.error("❌ Error type:", error.constructor.name);
+    console.error("❌ Error message:", error.message);
+  } else {
+    console.error("❌ Unknown error:", error);
+  }
+}
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>fileToImageAsset Function Test</title>
+  <style>
+    body { 
+      font-family: system-ui, sans-serif; 
+      padding: 20px; 
+      line-height: 1.6;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .success { color: #22c55e; font-weight: bold; }
+    .error { color: #ef4444; font-weight: bold; }
+    .warning { color: #f59e0b; font-weight: bold; }
+    .info { color: #3b82f6; font-weight: bold; }
+    .code { 
+      font-family: monospace; 
+      background: #f3f4f6; 
+      padding: 4px 8px; 
+      border-radius: 4px;
+      word-break: break-all;
+    }
+    .url-box {
+      background: #1f2937;
+      color: #f3f4f6;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 8px 0;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .test-result {
+      border: 2px solid;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .test-success { border-color: #22c55e; background: #dcfce7; }
+    .test-error { border-color: #ef4444; background: #fee2e2; }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .url-comparison {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .error-details {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .stack-trace {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .status-item {
+      padding: 8px;
+      border-radius: 4px;
+      background: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 fileToImageAsset Function Test</h1>
+  
+  <div class="test-result {testResults.success ? 'test-success' : 'test-error'}">
+    <h2>{testResults.success ? '✅ Test Successful' : '❌ Test Failed'}</h2>
+    
+    {testResults.success ? (
+      <div>
+        <p class="success">fileToImageAsset function works properly!</p>
+        <p>Images have been successfully localized and optimized.</p>
+      </div>
+    ) : (
+      <div>
+        <p class="error">fileToImageAsset function has issues</p>
+        {testResults.error && (
+          <div class="error-details">
+            <h3>🔍 Error Analysis</h3>
+            {testResults.detailedError ? (
+              <div>
+                <p><strong>Error Type:</strong> <span class="code">{testResults.detailedError.type}</span></p>
+                <p><strong>Error Message:</strong></p>
+                <div class="url-box">{testResults.detailedError.message}</div>
+                {testResults.detailedError.stack && (
+                  <div>
+                    <p><strong>Stack Trace:</strong></p>
+                    <div class="stack-trace">{testResults.detailedError.stack}</div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div class="url-box">{String(testResults.error)}</div>
+            )}
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+
+  <h2>📊 Test Details</h2>
+  
+  <div class="status-grid">
+    <div class="status-item">
+      <strong>Photo Data:</strong><br>
+      Has Photos: {testResults.hasPhotos ? '✅ Yes' : '❌ No'}<br>
+      Photo Count: {testResults.photosCount}
+    </div>
+    <div class="status-item">
+      <strong>URL Status:</strong><br>
+      Accessible: {testResults.urlAccessible ? '✅ Yes' : '❌ No'}<br>
+      HTTP Status: {testResults.httpStatus || 'Unknown'}
+    </div>
+  </div>
+
+  {testResults.originalUrl && (
+    <div class="comparison">
+      <div class="url-comparison">
+        <h3>🌐 Original Remote URL</h3>
+        <div class="url-box">{testResults.originalUrl}</div>
+        <p><small>This is the S3 URL from Notion, expires in 1 hour</small></p>
+        <p><strong>Status:</strong> <span class={testResults.urlAccessible ? 'success' : 'error'}>
+          {testResults.urlAccessible ? '✅ Accessible' : '❌ Not Accessible'}
+        </span></p>
+      </div>
+      
+      {testResults.localizedUrl && (
+        <div class="url-comparison">
+          <h3>🏠 Localized URL</h3>
+          <div class="url-box">{testResults.localizedUrl}</div>
+          <p><small>This is the local URL processed by Astro, never expires</small></p>
+          <p><strong>Format:</strong> <span class={testResults.localizedUrl.startsWith('/_astro/') ? 'success' : 'warning'}>
+            {testResults.localizedUrl.startsWith('/_astro/') ? '✅ Local' : '⚠️ Remote'}
+          </span></p>
+        </div>
+      )}
+    </div>
+  )}
+
+  {testResults.localizedUrl && (
+    <div style="margin: 30px 0;">
+      <h2>🖼️ Image Test</h2>
+      <p>Testing localized image (using simple img tag to avoid Astro processing):</p>
+      
+      <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <h3>Localized Image Test:</h3>
+        <!-- Use simple img tag to avoid triggering Astro's image processing -->
+        <img 
+          src={testResults.localizedUrl} 
+          alt="Localized test image"
+          style="max-width: 300px; height: auto; border-radius: 8px;"
+          loading="lazy"
+        />
+        <p><small>Using simple &lt;img&gt; tag to avoid Astro image processing errors</small></p>
+      </div>
+    </div>
+  )}
+
+  <h2>🔍 URL Format Analysis</h2>
+  
+  {testResults.localizedUrl ? (
+    <div>
+      <p><strong>Localized URL Analysis:</strong></p>
+      <ul>
+        <li>Starts with /_astro/: {testResults.localizedUrl.startsWith('/_astro/') ? '✅' : '❌'}</li>
+        <li>Contains hash: {testResults.localizedUrl.match(/_[a-zA-Z0-9]+\./) ? '✅' : '❌'}</li>
+        <li>Ends with .webp: {testResults.localizedUrl.endsWith('.webp') ? '✅' : '❌'}</li>
+      </ul>
+      
+      {testResults.localizedUrl.startsWith('/_astro/') && testResults.localizedUrl.endsWith('.webp') ? (
+        <p class="success">🎉 URL format is perfect! Image has been successfully localized.</p>
+      ) : (
+        <p class="warning">⚠️ URL format doesn't match expectations, there might be an issue.</p>
+      )}
+    </div>
+  ) : (
+    <p class="error">Cannot analyze URL format because localization failed.</p>
+  )}
+
+  <hr style="margin: 40px 0;">
+  <p>
+    <a href="/">← Back to Home</a> | 
+    <a href="/photos">View Photos</a> | 
+    <a href="/debug-images">Image Debug</a>
+  </p>
+</body>
+</html> 

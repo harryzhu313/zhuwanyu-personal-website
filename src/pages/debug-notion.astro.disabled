@@ -1,0 +1,92 @@
+---
+// Temporarily disabled for build
+// import { notionLoader } from "notion-astro-loader";
+
+let debugInfo = {
+  hasToken: false,
+  tokenLength: 0,
+  databaseId: "",
+  rawData: null,
+  error: null,
+};
+
+try {
+  // 检查环境变量
+  const token = import.meta.env.NOTION_TOKEN;
+  debugInfo.hasToken = !!token;
+  debugInfo.tokenLength = token?.length || 0;
+  debugInfo.databaseId = "1dc62405089a80cdb786d46602d9d582";
+
+  if (token) {
+    // 尝试获取原始数据
+    const loader = notionLoader({
+      auth: token,
+      database_id: debugInfo.databaseId,
+    });
+    
+    const rawData = await loader();
+    debugInfo.rawData = rawData;
+    
+    console.log('🔍 Notion Debug - 原始数据:', {
+      dataLength: rawData?.length || 0,
+      firstEntry: rawData?.[0] ? {
+        id: rawData[0].id,
+        hasData: !!rawData[0].data,
+        hasCover: !!rawData[0].data?.cover,
+        hasProperties: !!rawData[0].data?.properties,
+        propertiesKeys: rawData[0].data?.properties ? Object.keys(rawData[0].data.properties) : [],
+      } : null
+    });
+  }
+} catch (error) {
+  debugInfo.error = error;
+  console.error('🔍 Notion Debug - 错误:', error);
+}
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notion Debug</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    .success { color: green; }
+    .error { color: red; }
+    .warning { color: orange; }
+    pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Notion 连接调试信息</h1>
+  
+  <h2>环境变量检查</h2>
+  <p class={debugInfo.hasToken ? "success" : "error"}>
+    NOTION_TOKEN: {debugInfo.hasToken ? `✅ 已设置 (长度: ${debugInfo.tokenLength})` : "❌ 未设置"}
+  </p>
+  <p>数据库ID: {debugInfo.databaseId}</p>
+  
+  <h2>数据获取结果</h2>
+  {debugInfo.error ? (
+    <div class="error">
+      <p>❌ 获取数据时出错:</p>
+      <pre>{debugInfo.error.toString()}</pre>
+    </div>
+  ) : debugInfo.rawData ? (
+    <div class="success">
+      <p>✅ 成功获取数据</p>
+      <p>条目数量: {debugInfo.rawData.length}</p>
+      {debugInfo.rawData.length > 0 && (
+        <div>
+          <h3>第一个条目结构:</h3>
+          <pre>{JSON.stringify(debugInfo.rawData[0], null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  ) : (
+    <p class="warning">⚠️ 正在获取数据...</p>
+  )}
+  
+  <hr>
+  <p><a href="/">返回首页</a> | <a href="/photos">查看照片页面</a></p>
+</body>
+</html> 

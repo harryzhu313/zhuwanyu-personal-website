@@ -1,0 +1,50 @@
+---
+import Commenter from "../islands/Commenter";
+import { type Entry, site, slugify, yymmdd } from "..";
+import WebMention from "../islands/WebMention";
+import Layout from "./Layout.astro";
+import type { DataEntryMap } from "astro:content";
+
+interface Props extends Entry {
+  collection: keyof DataEntryMap;
+}
+
+const { collection, title, date, categories, description } = Astro.props;
+const slug = slugify(title);
+const path = collection + "/" + slug;
+const url = site + "/" + path;
+---
+
+<Layout collection={collection}>
+  <main class="h-entry">
+    <section class="section entry-metadata">
+      <div class="content has-text-centered">
+        <h2 class="p-name">{title}</h2>
+        <a class="p-author h-card is-hidden" href={site}>
+          谭淞宸
+        </a>
+        <a class="u-url is-hidden" href={url}></a>
+        <p>
+          {
+            categories.map((category) => (
+              <span class="tag is-medium is-info is-light p-category">
+                {category}
+              </span>
+            ))
+          }
+        </p>
+        <p class="p-summary">{description}</p>
+        <p>
+          <time class="dt-published" datetime={date.toISOString()}>
+            {yymmdd(date)}
+          </time>
+        </p>
+      </div>
+    </section>
+    <slot />
+  </main>
+  <hr />
+  <Commenter collection={collection} entry={slug} client:only />
+  <hr />
+  <WebMention collection={collection} entry={slug} client:only />
+</Layout>

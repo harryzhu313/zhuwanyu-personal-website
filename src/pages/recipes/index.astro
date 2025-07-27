@@ -1,0 +1,74 @@
+---
+import { getCollection } from "astro:content";
+import CollectionLayout from "../../layouts/CollectionLayout.astro";
+import Dish from "../../islands/Dish";
+import { slugify, type Recipe } from "../..";
+import Introduction from "../../components/Introduction.astro";
+import { preprocessRecipe } from "../../content/config";
+import OrderForm from "../../islands/OrderForm";
+import { Image } from "astro:assets";
+
+const recipes = await getCollection("recipes");
+const nodes: Recipe[] = await Promise.all(recipes.map(preprocessRecipe));
+const groups = ["鲁菜", "川菜", "粤菜", "淮扬菜", "面点", "异域风情"].map(
+  (k) => ({
+    title: k,
+    dishes: [] as Recipe[],
+  })
+);
+for (const dish of nodes) {
+  groups.find((x) => x.title === dish.categories[0])!.dishes.push(dish);
+}
+for (const { dishes } of groups) {
+  dishes.sort((a, b) => b.rating.length - a.rating.length);
+}
+---
+
+<CollectionLayout collection="recipes">
+  <Introduction collection="recipes">
+    <p>唯爱与美食不可辜负。</p>
+    <p>
+      生于山东烟台，齐鲁大地的丰饶物产培育了我对鲁菜简单的热爱；长于北京海淀，来自五湖四海的珍馐美馔又激发着我对它们真实的好奇。然则一身长居远邦，佳肴难得，自己下厨丰衣足食也就成为了必然。所幸身边有不少厨艺高手与饕餮客，探寻美食的同时也可以广结良友。
+    </p>
+    <p>
+      您可以在下方查看我近期做过的菜品，选择几味您感兴趣的并预约时间登门品尝；您也可以只预约时间而不指定菜品，我将会根据当日可得的食材即兴发挥。
+    </p>
+  </Introduction>
+  <section class="section">
+    {
+      groups.map(({ title, dishes }) => (
+        <article class="columns">
+          <div class="column is-one-quarter has-text-centered">
+            <div class="content">
+              <h3>{title}</h3>
+            </div>
+          </div>
+          <div class="column is-flex is-flex-wrap-wrap is-justify-content-center gap-1">
+            {dishes.map(({ title, image, rating }) => {
+              return (
+                <div class="box dish">
+                  <div class="dish-image">
+                    <a href={slugify(title)}>
+                      <!-- 所有图片现在都是本地化的，统一使用 Astro Image 组件 -->
+                      <Image width={180} height={180} class="fit" src={image} alt={title} />
+                    </a>
+                  </div>
+                  <div class="content">
+                    <p class="is-medium">{title}</p>
+                    <p class="is-small">{rating}</p>
+                    <Dish title={title} client:only/>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+  <section class="section">
+    <div class="container content is-max-desktop">
+      <OrderForm client:only />
+    </div>
+  </section>
+</CollectionLayout>

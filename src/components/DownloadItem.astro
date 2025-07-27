@@ -1,0 +1,23 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  name: string;
+  url: string;
+  icon: string;
+}
+
+const { name, url, icon } = Astro.props;
+---
+
+<div class="column is-flex is-justify-content-center is-align-items-center gap-1">
+  <div>
+    <Icon name={icon} />
+    <span> {name}</span>
+  </div>
+  <div>
+    <a href={url}>
+      <button class="button is-info">下载</button>
+    </a>
+  </div>
+</div>

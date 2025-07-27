@@ -1,0 +1,21 @@
+---
+import Layout from "./Layout.astro";
+import Commenter from "../islands/Commenter";
+import WebMention from "../islands/WebMention";
+import { type DataEntryMap } from "astro:content";
+
+interface Props {
+  collection?: keyof DataEntryMap;
+}
+
+const { collection } = Astro.props;
+---
+
+<Layout collection={collection}>
+  <slot />
+  <!-- 暂时注释掉评论系统和 WebMention 用于测试 -->
+  <!-- <hr />
+  <Commenter collection={collection ?? ""} entry={""} client:only />
+  <hr />
+  <WebMention collection={collection ?? ""} entry={""} client:only /> -->
+</Layout>

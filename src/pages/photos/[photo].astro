@@ -1,0 +1,26 @@
+---
+import ExifImage from "../../components/ExifImage.astro";
+import EntryLayout from "../../layouts/EntryLayout.astro";
+import { getNotionPhotos } from "../../utils/notion-photos";
+
+export async function getStaticPaths() {
+  try {
+    const validPhotos = await getNotionPhotos();
+    console.log('🎯 动态路由: 有效照片数量:', validPhotos?.length || 0);
+    
+    return validPhotos.map(photo => ({
+      params: { photo: photo.slug },
+      props: { photo }
+    }));
+  } catch (error) {
+    console.error('❌ 动态路由: 生成静态路径时出错:', error);
+    return [];
+  }
+}
+
+const { photo } = Astro.props;
+---
+
+<EntryLayout collection="photos" {...photo}>
+  <ExifImage image={photo.image} exif={photo.exif} />
+</EntryLayout>

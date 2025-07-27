@@ -1,0 +1,131 @@
+---
+import { Icon } from "astro-icon/components";
+import { createDate, yymmdd } from "..";
+import { Image } from "astro:assets";
+
+export interface ExifData {
+  DateTimeOriginal?: string;
+  LensMake?: string;
+  LensModel?: string;
+  FocalLength?: number;
+  ISO?: number;
+  FNumber?: number;
+  ExposureTime?: number;
+  ExposureBiasValue?: number;
+  GPSLatitudeRef?: string;
+  GPSLatitude?: [number, number, number];
+  GPSLongitudeRef?: string;
+  GPSLongitude?: [number, number, number];
+  Make?: string;
+  Model?: string;
+}
+
+const localize = (s: string) => {
+  return s.replace("back dual wide camera", "广角相机");
+};
+
+interface Props {
+  exif: ExifData | Partial<ExifData>;
+  image: string;
+}
+
+const renderCoordinate = (d: number, m: number, s: number, ref: string) =>
+  `${d}°${m}′${Math.round(s)}″${ref}`;
+
+const { exif, image } = Astro.props;
+---
+
+<script>
+  for (const element of document.getElementsByClassName("modal-toggle")) {
+    element.addEventListener("click", () => {
+      document.getElementById("image-modal")?.classList.toggle("is-active");
+    });
+  }
+</script>
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    {/* 所有图片现在都通过 Astro Image 组件处理，因为已经本地化 */}
+    <Image
+      class="modal-toggle"
+      src={image}
+      alt=""
+      aria-haspopup="true"
+      width={800}
+      height={600}
+      style="width: 100%; height: auto; cursor: pointer;"
+    />
+  </div>
+  <div id="image-modal" class={"modal"}>
+    <div class="modal-background"></div>
+    <div class="modal-content content has-text-centered">
+      <Image 
+        src={image} 
+        alt="" 
+        width={1200}
+        height={900}
+        style="max-width: 100%; height: auto;"
+      />
+    </div>
+    <button class="modal-close is-large modal-toggle" aria-label="close"
+    ></button>
+  </div>
+</section>
+<section class="section">
+  <div class="container is-max-desktop content">
+    <div class="columns">
+      <div class="column">
+        <p class="is-flex gap-1">
+          <Icon name="fa6-solid:calendar" />
+          {exif.DateTimeOriginal ? yymmdd(createDate(exif.DateTimeOriginal)) : "拍摄时间不可用"}
+        </p>
+      </div>
+      {
+        exif.GPSLatitude && exif.GPSLongitude && exif.GPSLatitudeRef && exif.GPSLongitudeRef ? (
+          <div class="column">
+            <p class="is-flex gap-1">
+              <Icon name="fa6-solid:location-arrow" />
+              {renderCoordinate(...exif.GPSLatitude, exif.GPSLatitudeRef)}
+              {renderCoordinate(...exif.GPSLongitude, exif.GPSLongitudeRef)}
+            </p>
+          </div>
+        ) : (
+          <div class="column">
+            <p class="is-flex gap-1">
+              <Icon name="fa6-solid:location-arrow" />
+              位置信息不可用
+            </p>
+          </div>
+        )
+      }
+    </div>
+    <div class="columns">
+      <div class="column">
+        <p class="is-flex gap-1">
+          <Icon name="fa6-solid:camera" />
+          {exif.Make || "未知品牌"} {exif.Model || "未知型号"}
+        </p>
+      </div>
+      <div class="column">
+        <p class="is-flex gap-1">
+          <Icon name="fa6-solid:magnifying-glass" />
+          {exif.LensModel ? localize(exif.LensModel) : "镜头信息不可用"}
+        </p>
+      </div>
+      <div class="column">
+        <p class="is-flex gap-1">
+          <Icon name="fa6-solid:bars" />
+          {
+            exif.FocalLength && exif.FNumber && exif.ExposureTime && exif.ISO
+              ? `${exif.FocalLength}mm, ƒ/${exif.FNumber} ${
+                  exif.ExposureTime >= 1
+                    ? `${exif.ExposureTime}`
+                    : `1/${Math.round(1 / exif.ExposureTime)}`
+                }s, ISO ${exif.ISO}`
+              : "相机参数不可用"
+          }
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,65 @@
+---
+import CollectionLayout from "../../layouts/CollectionLayout.astro";
+import { Image } from "astro:assets";
+import Introduction from "../../components/Introduction.astro";
+import { getNotionPhotos, type ProcessedPhoto } from "../../utils/notion-photos";
+
+let nodes: ProcessedPhoto[] = [];
+
+try {
+  // 使用新的图片本地化工具函数
+  nodes = await getNotionPhotos();
+  console.log('🎯 照片列表页面最终获取到照片数量:', nodes?.length || 0);
+  
+  // 打印本地化状态统计
+  const localCount = nodes.filter(node => !node.isRemote).length;
+  const remoteCount = nodes.filter(node => node.isRemote).length;
+  console.log(`📊 图片状态统计: 本地化成功 ${localCount} 张, 仍为远程 ${remoteCount} 张`);
+  
+} catch (error) {
+  console.error('❌ 照片列表页面获取数据出错:', error);
+  nodes = [];
+}
+---
+
+<CollectionLayout collection="photos">
+  <Introduction collection="photos">
+    <p>一千人眼中有一千种风景，一千张照片背后有一千个故事。</p>
+  </Introduction>
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <div
+        class="column is-flex is-flex-wrap-wrap is-justify-content-center gap-1 photo-grid"
+      >
+                {
+          nodes && nodes.length > 0 ? (
+            nodes.map(({ title, image, isRemote, slug }) => {
+              return (
+                <div class="box">
+                  <a href={slug}>
+                    {/* 现在所有图片都应该通过 Astro Image 组件处理，因为本地化的图片会有 /_astro/ 路径 */}
+                    <Image
+                      class="photo-gallery"
+                      src={image}
+                      alt={title}
+                      width={300}
+                      height={300}
+                    />
+                  </a>
+                </div>
+              );
+            })
+          ) : (
+            <div class="box has-text-centered">
+              <p class="content">
+                {nodes?.length === 0 
+                  ? "暂无照片，请在 Notion 数据库中添加照片并设置封面图片。" 
+                  : "正在加载照片..."}
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</CollectionLayout>

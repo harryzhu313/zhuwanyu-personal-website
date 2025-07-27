@@ -1,0 +1,13 @@
+---
+interface Props {
+  collection: string
+}
+
+const { collection } = Astro.props;
+---
+
+<section class=`section introduction ${collection}`>
+  <div class="container is-max-widescreen">
+    <slot />
+  </div>
+</section>

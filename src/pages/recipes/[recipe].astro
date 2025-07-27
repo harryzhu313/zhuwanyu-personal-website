@@ -1,0 +1,28 @@
+---
+import { render } from "astro:content";
+import { getCollection } from "astro:content";
+import EntryLayout from "../../layouts/EntryLayout.astro";
+import { slugify, type Recipe } from "../..";
+import { preprocessRecipe } from "../../content/config";
+export async function getStaticPaths() {
+  const recipes = await getCollection("recipes");
+  return recipes.map(({ data }) => ({
+    params: { recipe: slugify(data.properties.Name) },
+  }));
+}
+
+const contents = await getCollection(
+  "recipes",
+  (e) => slugify(e.data.properties.Name) == Astro.params.recipe
+);
+const recipe: Recipe = await preprocessRecipe(contents[0]);
+const { Content } = await render(contents[0]);
+---
+
+<EntryLayout collection="recipes" {...recipe}>
+  <section class="section e-content">
+    <article class="container is-max-desktop content">
+      <Content />
+    </article>
+  </section>
+</EntryLayout>
