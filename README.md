@@ -3,7 +3,7 @@
 - 主站：www.zhuwanyu.com
 - 网站代码来源：https://github.com/tansongchen/tansongchen.github.io
 
-## 开放与构建
+## 开发与构建
 
 ### 本地开发
 `npm run dev`
