@@ -33,6 +33,17 @@ const Selector = ({
       <div className="level container is-max-widescreen is-vcentered">
         <div className="level-left">
           <div className="tags">
+            <div
+              className={clsx(
+                "tag",
+                "is-medium",
+                "is-link",
+                activeTag && "is-light"
+              )}
+              onClick={() => changeTag(activeTag, undefined)}
+            >
+              全部
+            </div>
             {allTags.map((tag) => (
               <div
                 key={tag}

@@ -12,17 +12,16 @@ import type { Dress, Music, Photo, Recipe, Video } from "..";
 import exifr from "exifr";
 import type { ExifData } from "../components/ExifImage.astro";
 
-// 暂时注释掉 articles 集合
-// const articles = defineCollection({
-//   loader: glob({ pattern: "**/*.md", base: "./articles" }),
-//   schema: z.object({
-//     title: z.string(),
-//     description: z.string(),
-//     categories: z.array(z.string()),
-//     cover: z.string(),
-//     date: z.coerce.date(),
-//   }),
-// });
+const articles = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./articles" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    categories: z.array(z.string()),
+    cover: z.string(),
+    date: z.coerce.date(),
+  }),
+});
 
 function defineNotionCollection<T extends ZodRawShape>(
   database: string,
@@ -65,7 +64,6 @@ const photos = defineCollection({
 });
 
 // 临时创建空集合
-const articles = defineCollection({ loader: () => [], schema: z.any() });
 const videos = defineCollection({ loader: () => [], schema: z.any() });
 const musics = defineCollection({ loader: () => [], schema: z.any() });
 const recipes = defineCollection({ loader: () => [], schema: z.any() });
