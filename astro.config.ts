@@ -5,10 +5,13 @@ import icon from "astro-icon";
 import AstroPWA from "@vite-pwa/astro";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
+import netlify from "@astrojs/netlify";
 import { description, site, title } from "./src";
 
 export default defineConfig({
   site,
+  output: "static",
+  adapter: netlify(),
   integrations: [
     react(),
     icon(),
