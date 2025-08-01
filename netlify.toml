@@ -6,10 +6,10 @@
   NODE_VERSION = "18"
   NPM_VERSION = "9"
 
-# 处理 SPA 路由
+# 处理 404 页面
 [[redirects]]
   from = "/*"
-  to = "/404.html"
+  to = "/404/index.html"
   status = 404
 
 # 缓存优化

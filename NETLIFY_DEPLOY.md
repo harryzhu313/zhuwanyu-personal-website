@@ -74,6 +74,9 @@ npm run fresh-build
 1. 检查 Node.js 版本（建议 18+）
 2. 确保所有依赖都在 `package.json` 中
 3. 检查环境变量是否正确设置
+4. **配置冲突**：如果看到 "Failed to build site" 但构建日志显示成功，可能是 Astro 配置问题
+   - 确保 `astro.config.ts` 中没有同时使用 `output: "static"` 和 `adapter: netlify()`
+   - 对于静态站点，不需要 Netlify 适配器
 
 ### 图片不显示
 1. 确保图片路径正确
