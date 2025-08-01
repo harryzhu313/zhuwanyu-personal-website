@@ -55,7 +55,7 @@ export interface Collection {
 export const title = "Harry 的个人网站";
 export const description = "Harry 的个人网站";
 export const site = "https://zhuwanyu.com";
-export const email = "i@zhuwanyu.com";
+export const email = "harryzhu@gmail.com";
 export const endpoint = "https://api.zhuwanyu.com";
 
 export const yymmdd = (d: Date) =>

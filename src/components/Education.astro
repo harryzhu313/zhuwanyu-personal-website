@@ -30,7 +30,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
   <div class="box columns">
     <div class="column">
       <a href={institutionUrl}>
-        <Image class="fit" src={images[photo]()} alt={photo} />
+        <Image class="fit education-photo" src={images[photo]()} alt={photo} />
       </a>
     </div>
     <div class="column content">
@@ -63,3 +63,11 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
     </div>
   </div>
 </article>
+
+<style>
+  .education-photo {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }
+</style>

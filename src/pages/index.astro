@@ -1,6 +1,109 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { title } from "..";
+import Experience, {
+  type Props as ExperienceProps,
+} from "../components/Experience.astro";
+import Education, {
+  type Props as EducationProps,
+} from "../components/Education.astro";
+import DateTag from "../components/DateTag.astro";
+import Preface, {
+  type Props as PrefaceProps,
+} from "../components/Preface.astro";
+import WebsiteCard, {
+  type Props as WebsiteCardProps,
+} from "../components/WebsiteCard.astro";
+
+const educationPreface: PrefaceProps = {
+  title: "教育与学习经历",
+  quote: "成年人的学习，是终身学习。",
+  description: "",
+};
+
+const experiencePreface: PrefaceProps = {
+  title: "工作经历",
+  quote: "新生活是每一个人，每日有一定的做工，有有一定的时候求学。",
+  description: "",
+};
+
+const websitesPreface: PrefaceProps = {
+  title: "相关网站链接",
+  quote: "欢迎访问我的其他网站",
+  description: "",
+};
+
+const sentinel: EducationProps = {
+  photo: "/src/assets/education/sentinelss.jpg",
+  institutionName: "Sentinel Secondary School",
+  institutionUrl: "https://westvancouverschools.ca/ecole-sentinel-secondary/",
+  degrees: [
+    ["高中", "https://westvancouverschools.ca/ecole-sentinel-secondary/"],
+  ],
+  location: "温哥华",
+  duration: "2006 - 2008",
+  description: "高中赴加拿大留学，来到美丽的温哥华，第一次离开父母，第一次独立生活。",
+};
+
+const yorku: EducationProps = {
+  photo: "/src/assets/education/yorku.jpeg",
+  institutionName: "York University",
+  institutionUrl: "https://www.yorku.ca/",
+  degrees: [
+    ["经济学学士", "https://www.yorku.ca/program/econ/bsc/"],
+  ],
+  location: "多伦多",
+  duration: "2009 - 2012",
+  description: "本科阶段，主修经济学。",
+};
+
+const candobear: EducationProps = {
+  photo: "/src/assets/education/candobear.png",
+  institutionName: "小能熊",
+  institutionUrl: "https://www.candobear.com/",
+  degrees: [
+    ["终身学习", "https://www.candobear.com/"],
+  ],
+  location: "北京",
+  duration: "2020 - 至今",
+  description: "我很认同创始人@Howie 说的，“成年人的一切问题，都是学习问题”。学会学习，学会自我管理，才能过好这一生。",
+};
+
+const sentinelChina: ExperienceProps = {
+  title: "市场运营与销售经理",
+  company: "天津市森特奈电子有限公司",
+  companyUrl: "https://sentinel-china.com/",
+  photo: "/src/assets/experience/sentinel-china.jpg",
+  description: "从一开始在公司负责产品的拍照与拍摄，到建立线上运营部门、搭建官方网站、创建外贸团队，再到负责公司整体的市场运营与销售，这一路走来，我学到了很多，也成长了很多。",
+  duration: "2021 年至今",
+  location: "天津市",
+  isCurrent: true,
+};
+
+const secreenwriter: ExperienceProps = {
+  title: "编剧",
+  company: "北京爆鱼影视文化有限公司",
+  companyUrl: " ",
+  photo: "/src/assets/experience/film.jpg",
+  description: "电影打开了我认识世界的大门，让我看到了一个更广阔的世界，更加丰富的人生。虽然我最终没有走上编剧的道路，但是这段经历让我爱上了电影，也让我对这个世界充满好奇。",
+  duration: "2015 - 2019",
+  location: "北京",
+};
+
+const websites: WebsiteCardProps[] = [
+  {
+    title: "朱婉妤的知识库",
+    url: "https://notes.zhuwanyu.com/welcome",
+    description: "我的个人知识库，记录学习心得和生活感悟",
+    icon: "fa6-solid:book",
+  },
+  {
+    title: "育儿知识库",
+    url: "https://baby.harryrou.wiki",
+    description: "记录育儿过程中的点滴，分享育儿经验",
+    icon: "fa6-solid:baby",
+  },
+];
 ---
 
 <Layout>
@@ -14,6 +117,29 @@ import { title } from "..";
             网站正在建设中，请稍后再来查看...
           </p>
         </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <Preface {...educationPreface} />
+    <Education {...sentinel} />
+    <Education {...yorku} />
+    <Education {...candobear} />
+  </section>
+  <section class="section">
+    <Preface {...experiencePreface} />
+    <div class="timeline container is-max-desktop">
+      <DateTag date="2015" />
+      <Experience {...secreenwriter} />
+      <DateTag date="2021" />
+      <Experience {...sentinelChina} />
+    </div>
+  </section>
+  <section class="section">
+    <Preface {...websitesPreface} />
+    <div class="container is-max-desktop">
+      <div class="columns is-multiline">
+        {websites.map((website) => <WebsiteCard {...website} />)}
       </div>
     </div>
   </section>

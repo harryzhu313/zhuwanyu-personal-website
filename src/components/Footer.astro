@@ -7,7 +7,7 @@ import { email } from "..";
   <div class="container">
     <div class="columns">
       <section class="column has-text-centered content">
-        <p>谭淞宸 © 2017 - {new Date().getFullYear()}</p>
+        <p>朱婉妤 © 2025 - {new Date().getFullYear()}</p>
         <p>
           网页代码以{" "}
           <a class="in-paragraph" href="https://opensource.org/licenses/mit-license.php">MIT</a> 协议发布
@@ -22,29 +22,68 @@ import { email } from "..";
       </section>
       <section class="column has-text-centered content">
         <p>联系方式</p>
-        <p>
-          <Icon name="fa6-solid:phone" />
-          <a href="tel:+18572989702">+1 (857) 298-9702</a>
-        </p>
-        <p>
-          <Icon name="fa6-solid:envelope" />
-          <a href=`mailto:${email}`>{email}</a>
-        </p>
+        <div class="social-links">
+          <!-- <p>
+            <Icon name="fa6-solid:code-branch" />
+            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </p> -->
+            <p class="wechat-hover">
+              <Icon name="fa6-solid:comments" />
+              <span>微信公众号</span>
+              <div class="wechat-qr">
+                <!-- <img src="/src/assets/wechat-qr.jpg" alt="微信公众号二维码" /> -->
+              </div>
+            </p>
+          <!-- <p>
+            <Icon name="fa6-solid:hashtag" />
+            <a href="https://x.com/yourusername" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+          </p> -->
+          <p>
+            <Icon name="fa6-solid:envelope" />
+            <a href=`mailto:${email}`>{email}</a>
+          </p>
+        </div>
       </section>
       <section class="column has-text-centered content">
-        <p>地址</p>
-        <p>
-          <a
-            href="https://maps.google.com/maps?ll=42.361941,-71.090438&z=15&t=m&hl=en-US&gl=US&mapclient=embed&cid=3475329887376826349"
-          >
-            Gates Building Room 785
-            <br />
-            32 Vassar Street
-            <br />
-            Cambridge, MA 02139
-          </a>
-        </p>
+        <!-- <p>网站统计</p>
+        <div class="stats">
+          <p>
+            <Icon name="fa6-solid:eye" />
+            <span>访问量: --</span>
+          </p>
+          <p>
+            <Icon name="fa6-solid:file-lines" />
+            <span>文章数量: --</span>
+          </p>
+          <p>
+            <Icon name="fa6-solid:clock" />
+            <span>建站时间: 2024</span>
+          </p>
+        </div> -->
       </section>
     </div>
   </div>
 </footer>
+
+<style>
+  .social-links p, .stats p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .social-links a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .social-links a:hover {
+    text-decoration: underline;
+  }
+  
+  .stats span {
+    font-weight: normal;
+  }
+</style>

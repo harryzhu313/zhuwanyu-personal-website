@@ -1,0 +1,36 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  title: string;
+  url: string;
+  description?: string;
+  icon?: string;
+}
+
+const { title, url, description, icon = "fa6-solid:link" } = Astro.props;
+---
+
+<div class="column is-half">
+  <article class="card">
+    <header class="card-header">
+      <p class="card-header-title">
+        <Icon name={icon} class="icon is-small mr-2" />
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          {title}
+        </a>
+      </p>
+    </header>
+    {description && (
+      <div class="card-content">
+        <p class="content">{description}</p>
+      </div>
+    )}
+    <footer class="card-footer">
+      <a href={url} target="_blank" rel="noopener noreferrer" class="card-footer-item">
+        <Icon name="fa6-solid:arrow-up-right-from-square" class="icon is-small mr-1" />
+        <span>访问网站</span>
+      </a>
+    </footer>
+  </article>
+</div> 
