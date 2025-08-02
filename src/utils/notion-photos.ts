@@ -38,9 +38,7 @@ export async function getNotionPhotos(): Promise<ProcessedPhoto[]> {
         const categories = entry.data.properties?.Categories 
           ? [entry.data.properties.Categories] 
           : [];
-        const date = entry.data.properties?.Date?.start 
-          ? new Date(entry.data.properties.Date.start) 
-          : new Date();
+        // 日期处理交给 preprocessPhoto 统一处理（优先级：EXIF > Notion Date > 当前时间）
 
         // 4. 使用 preprocessPhoto 处理照片（包含本地化逻辑）
         const processedPhoto = await preprocessPhoto(entry);

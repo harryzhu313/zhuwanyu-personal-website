@@ -128,21 +128,47 @@ export const preprocessPhoto = async (entry: Entry<"photos">): Promise<Photo | n
   }
   
   let exif: Partial<ExifData> = {};
-  let photoDate = new Date();
+  let photoDate = new Date(); // 默认使用当前时间
   
+  // 优先级1: 尝试从 EXIF 获取拍摄时间
   try {
     // 对于 EXIF 解析，我们使用原始的远程 URL，因为本地化的图片可能没有EXIF信息
     const imageUrl = fileToUrl(entry.data.cover);
     const parsedExif = await exifr.parse(imageUrl, true);
     if (parsedExif) {
       exif = parsedExif as ExifData;
-      // 如果有EXIF中的拍摄时间，使用它；否则使用当前时间
+      // 如果有EXIF中的拍摄时间，优先使用它
       if (exif.DateTimeOriginal && typeof exif.DateTimeOriginal === 'string') {
         photoDate = new Date(exif.DateTimeOriginal);
+        console.log(`📅 使用EXIF日期: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+      } else {
+        // 优先级2: 如果EXIF中没有拍摄时间，使用 Notion 中的 Date 字段
+        if (entry.data.properties.Date?.start) {
+          photoDate = new Date(entry.data.properties.Date.start);
+          console.log(`📅 使用Notion日期: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+        } else {
+          // 优先级3: 都没有则使用当前时间
+          console.log(`📅 使用当前时间: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+        }
+      }
+    } else {
+      // EXIF解析失败，尝试使用 Notion 日期
+      if (entry.data.properties.Date?.start) {
+        photoDate = new Date(entry.data.properties.Date.start);
+        console.log(`📅 EXIF解析失败，使用Notion日期: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+      } else {
+        console.log(`📅 EXIF解析失败且无Notion日期，使用当前时间: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
       }
     }
   } catch (error) {
     console.warn(`无法解析照片 "${entry.data.properties.Name}" 的EXIF信息:`, error);
+    // EXIF解析出错，尝试使用 Notion 日期
+    if (entry.data.properties.Date?.start) {
+      photoDate = new Date(entry.data.properties.Date.start);
+      console.log(`📅 EXIF解析出错，使用Notion日期: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+    } else {
+      console.log(`📅 EXIF解析出错且无Notion日期，使用当前时间: ${entry.data.properties.Name} -> ${photoDate.toISOString()}`);
+    }
     // 提供一个基本的空 EXIF 对象
     exif = {};
   }
