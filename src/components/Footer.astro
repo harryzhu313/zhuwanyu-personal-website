@@ -3,6 +3,26 @@ import { Icon } from "astro-icon/components";
 import { email } from "..";
 ---
 
+<script>
+  // 手机端点击显示二维码
+  document.addEventListener('DOMContentLoaded', function() {
+    const wechatHover = document.querySelector('.wechat-hover') as HTMLElement;
+    if (wechatHover && window.innerWidth <= 480) {
+      wechatHover.addEventListener('click', function(e: Event) {
+        e.preventDefault();
+        (e.currentTarget as HTMLElement).classList.toggle('active');
+      });
+      
+      // 点击其他地方时隐藏二维码
+      document.addEventListener('click', function(e: Event) {
+        if (e.target && !wechatHover.contains(e.target as Node)) {
+          wechatHover.classList.remove('active');
+        }
+      });
+    }
+  });
+</script>
+
 <footer class="footer">
   <div class="container">
     <div class="columns">
@@ -32,6 +52,10 @@ import { email } from "..";
                 <Icon name="fa6-solid:comments" />
                 <span>微信公众号</span>
               </p>
+              <div class="wechat-qr">
+                <img src="/wechat-qr.jpg" alt="微信公众号二维码" />
+              </div>
+            </div>
           <!-- <p>
             <Icon name="fa6-solid:hashtag" />
             <a href="https://x.com/yourusername" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
@@ -120,6 +144,24 @@ import { email } from "..";
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+  }
+
+  /* 手机端点击显示样式 */
+  @media (max-width: 480px) {
+    .wechat-hover:hover .wechat-qr {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    
+    .wechat-hover.active .wechat-qr {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    
+    .wechat-hover {
+      cursor: pointer !important;
+    }
   }
 
   /* 添加小箭头 */

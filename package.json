@@ -4,13 +4,21 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:full": "netlify dev",
+    "dev:netlify": "netlify dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "fresh-build": "node scripts/refresh-and-build.mjs",
     "fresh-preview": "node scripts/refresh-and-build.mjs && npm run preview",
-    "deploy": "node scripts/refresh-and-build.mjs"
+    "deploy": "node scripts/refresh-and-build.mjs",
+    "setup-api": "./scripts/setup-api.sh",
+    "check-api": "node scripts/check-api-setup.mjs",
+    "test-api": "node scripts/test-comment-api.mjs",
+    "start-dev": "node scripts/smart-dev.mjs",
+    "pre-deploy": "node scripts/pre-deploy-check.mjs",
+    "postinstall": "node scripts/check-api-setup.mjs || true"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -21,6 +29,7 @@
     "@cloudflare/stream-react": "^1.9.3",
     "@iconify-json/fa6-solid": "^1.2.3",
     "@octokit/request": "^10.0.2",
+    "@supabase/supabase-js": "^2.53.0",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
     "@vite-pwa/assets-generator": "^1.0.0",

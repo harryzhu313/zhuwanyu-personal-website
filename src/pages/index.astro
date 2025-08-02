@@ -123,6 +123,17 @@ const websites: WebsiteCardProps[] = [
             <h2 class="subtitle is-4" style="color: #6366f1; margin-bottom: 2rem; text-shadow: 0 1px 2px rgba(99,102,241,0.1);">
               电影摄影爱好者 | 终身学习者 ｜学习型家庭
             </h2>
+            <!-- 手机端头像插入位置 -->
+            <div class="mobile-avatar" style="display: none;">
+              <div class="image-container" style="position: relative; display: inline-block; text-align: center; margin: 1rem 0;">
+                <img 
+                  src="/harry.jpg" 
+                  alt="个人头像"
+                  class="profile-image"
+                  style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 8px solid #f8f9fa; box-shadow: 0 20px 40px rgba(0,0,0,0.1);"
+                />
+              </div>
+            </div>
             <div class="content">
               <p class="is-size-5" style="line-height: 1.2; margin-bottom: 2rem; color: #64748b; text-shadow: 0 1px 2px rgba(100,116,139,0.1);">
                 大家好，我是朱婉妤，网名Harry，欢迎来到我的个人网站。
@@ -243,9 +254,13 @@ const websites: WebsiteCardProps[] = [
     }
 
     @media (max-width: 480px) {
-      .profile-image {
-        width: 200px !important;
-        height: 200px !important;
+      /* 显示手机端头像，隐藏桌面端头像 */
+      .mobile-avatar {
+        display: block !important;
+      }
+      
+      .column.is-half-desktop.is-full-mobile:last-child {
+        display: none !important;
       }
       
       .button {
@@ -255,11 +270,13 @@ const websites: WebsiteCardProps[] = [
       
       h3 {
         font-size: 1.25rem !important;
+        margin-top: 5px !important;
       }
       
       .subtitle.is-4 {
         font-size: 0.9rem !important;
         line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
       }
       
       .hero-body {

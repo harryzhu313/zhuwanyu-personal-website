@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { yymmdd, put, get, type Comment } from "..";
+import { yymmdd, put, get, testEndpoint, type Comment } from "..";
 import useSWRImmutable from "swr/immutable";
 import {
   useForm,
@@ -111,7 +111,10 @@ export default function Commenter({
   entry,
 }: Record<string, string>) {
   const [submitting, setSubmitting] = useState(false);
-  const { data, error, mutate } = useSWRImmutable(`/comment`, get<Comment[]>);
+  // 临时使用测试端点
+  const { data, error, mutate } = useSWRImmutable(testEndpoint, () => 
+    fetch(testEndpoint).then(res => res.json())
+  );
   const onSubmitComment = async (form: CommentFormInput) => {
     const datetime = new Date();
     const comment: Comment = {
@@ -124,8 +127,30 @@ export default function Commenter({
     const optimisticData = [...(data ?? []), comment];
     const updateFn = async () => {
       setSubmitting(true);
-      await put("/comment", comment);
-      setSubmitting(false);
+      try {
+        // 临时使用测试端点
+        const response = await fetch(testEndpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(comment)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+        
+        const result = await response.json();
+        console.log('评论提交成功:', result);
+        window.alert("提交成功！");
+      } catch (error) {
+        console.error('评论提交失败:', error);
+        window.alert("提交失败：" + error.message);
+        throw error;
+      } finally {
+        setSubmitting(false);
+      }
       return optimisticData;
     };
     mutate(updateFn, {

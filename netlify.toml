@@ -1,10 +1,17 @@
 [build]
   command = "npm run fresh-build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+
+# API 重定向到 Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 
 # 处理 404 页面
 [[redirects]]

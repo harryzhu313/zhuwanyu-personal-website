@@ -56,7 +56,14 @@ export const title = "Harry 的个人网站";
 export const description = "Harry 的个人网站";
 export const site = "https://zhuwanyu.com";
 export const email = "harryzhu@gmail.com";
-export const endpoint = "https://api.zhuwanyu.com";
+export const endpoint = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? "http://localhost:8888/api"  // 本地开发
+  : "https://zhuwanyu.com/api";  // 生产环境 - 替换为你的实际域名
+
+// 临时测试用端点 - 使用内存存储的测试API
+export const testEndpoint = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? "http://localhost:8888/.netlify/functions/comment-test"  // 本地测试
+  : "https://zhuwanyu.com/.netlify/functions/comment-test";  // 生产测试
 
 export const yymmdd = (d: Date) =>
   `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
