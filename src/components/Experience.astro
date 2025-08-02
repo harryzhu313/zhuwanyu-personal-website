@@ -35,9 +35,9 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
   <div class="timeline-marker is-icon">
     {
       isCurrent ? (
-        <Icon class="icon is-info" name="fa6-solid:circle-play" />
+        <Icon class="icon" name="fa6-solid:circle-play" style="color: #6366f1;" />
       ) : (
-        <Icon class="icon is-info" name="fa6-solid:circle-check" />
+        <Icon class="icon" name="fa6-solid:circle-check" style="color: #6366f1;" />
       )
     }
   </div>

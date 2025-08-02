@@ -124,7 +124,8 @@ const Article = ({
             {categories.map((tag) => (
               <span
                 key={tag}
-                className="tag is-info is-light is-medium level-item"
+                className="tag is-medium level-item"
+                style={{ backgroundColor: "rgba(99, 102, 241, 0.1)", color: "#6366f1" }}
               >
                 {tag}
               </span>

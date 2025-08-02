@@ -20,20 +20,18 @@ import { email } from "..";
           协议发布
         </p>
       </section>
-      <section class="column has-text-centered content">
+      <section class="column has-text-centered content" id="contact-section">
         <p>联系方式</p>
         <div class="social-links">
           <!-- <p>
             <Icon name="fa6-solid:code-branch" />
             <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">GitHub</a>
           </p> -->
-            <p class="wechat-hover">
-              <Icon name="fa6-solid:comments" />
-              <span>微信公众号</span>
-              <div class="wechat-qr">
-                <!-- <img src="/src/assets/wechat-qr.jpg" alt="微信公众号二维码" /> -->
-              </div>
-            </p>
+            <div class="wechat-hover">
+              <p style="margin: 0;">
+                <Icon name="fa6-solid:comments" />
+                <span>微信公众号</span>
+              </p>
           <!-- <p>
             <Icon name="fa6-solid:hashtag" />
             <a href="https://x.com/yourusername" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
@@ -86,4 +84,54 @@ import { email } from "..";
   .stats span {
     font-weight: normal;
   }
+
+  /* 微信公众号悬浮显示样式 */
+  .wechat-hover {
+    position: relative !important;
+    cursor: pointer !important;
+  }
+
+  .wechat-qr {
+    position: absolute !important;
+    bottom: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: white !important;
+    border: 2px solid #6366f1 !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.3s ease !important;
+    z-index: 1000 !important;
+    margin-bottom: 10px !important;
+    pointer-events: none !important;
+  }
+
+  .wechat-qr img {
+    width: 150px !important;
+    height: 150px !important;
+    display: block !important;
+    border-radius: 4px !important;
+  }
+
+  .wechat-hover:hover .wechat-qr {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* 添加小箭头 */
+  .wechat-qr::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border: 8px solid transparent !important;
+    border-top-color: #6366f1 !important;
+  }
+
+
 </style>
