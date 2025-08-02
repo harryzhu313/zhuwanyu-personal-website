@@ -46,6 +46,8 @@ CREATE POLICY "Anyone can insert comments" ON comments
 1. 在 Supabase 项目设置中找到 "API" 页面
 2. 复制 "Project URL" 和 "anon public" key
 
+![](https://image.harryrou.wiki/2025-08-02-CleanShot%202025-08-02%20at%2021.31.02%402x.jpg)
+
 ### 2. Netlify 环境变量设置
 
 在 Netlify 项目设置中添加以下环境变量：
