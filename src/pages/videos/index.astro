@@ -6,8 +6,19 @@ import { Stream } from "@cloudflare/stream-react";
 import Introduction from "../../components/Introduction.astro";
 import { preprocessVideo } from "../../content/config";
 
-const videos = await getCollection("videos");
-const nodes: Video[] = await Promise.all(videos.map(preprocessVideo));
+// 安全获取 videos 集合
+let videos;
+let nodes: Video[] = [];
+
+try {
+  videos = await getCollection("videos");
+  if (videos && videos.length > 0) {
+    nodes = await Promise.all(videos.map(preprocessVideo));
+  }
+} catch (error) {
+  console.error("获取 videos 集合时出错:", error);
+  nodes = [];
+}
 ---
 
 <CollectionLayout collection="videos">
@@ -17,19 +28,25 @@ const nodes: Video[] = await Promise.all(videos.map(preprocessVideo));
   </Introduction>
   <section class="section">
     {
-      nodes.map(({ uid, title: name, date }) => {
-        return (
-          <article class="container content is-max-desktop">
-            <h2>
-              <a href={slugify(name)}>{name}</a>
-            </h2>
-            <p>{yymmdd(date)}</p>
-            <div>
-              <Stream controls src={uid} client:only />
-            </div>
-          </article>
-        );
-      })
+      nodes.length > 0 ? (
+        nodes.map(({ uid, title: name, date }) => {
+          return (
+            <article class="container content is-max-desktop">
+              <h2>
+                <a href={slugify(name)}>{name}</a>
+              </h2>
+              <p>{yymmdd(date)}</p>
+              <div>
+                <Stream controls src={uid} client:only />
+              </div>
+            </article>
+          );
+        })
+      ) : (
+        <div class="container content is-max-desktop">
+          <p>视频集合正在建设中，请稍后再来查看。</p>
+        </div>
+      )
     }
   </section>
 </CollectionLayout>

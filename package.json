@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "fresh-build": "node scripts/refresh-and-build.mjs",
+    "netlify-build": "node scripts/netlify-build-check.mjs && node scripts/refresh-and-build.mjs",
     "fresh-preview": "node scripts/refresh-and-build.mjs && npm run preview",
     "deploy": "node scripts/refresh-and-build.mjs",
     "setup-api": "./scripts/setup-api.sh",

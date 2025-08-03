@@ -5,8 +5,19 @@ import { slugify, yymmdd, type Music } from "../..";
 import Introduction from "../../components/Introduction.astro";
 import { preprocessMusic } from "../../content/config";
 
-const musics = await getCollection("musics");
-const nodes: Music[] = await Promise.all(musics.map(preprocessMusic));
+// 安全获取 musics 集合
+let musics;
+let nodes: Music[] = [];
+
+try {
+  musics = await getCollection("musics");
+  if (musics && musics.length > 0) {
+    nodes = await Promise.all(musics.map(preprocessMusic));
+  }
+} catch (error) {
+  console.error("获取 musics 集合时出错:", error);
+  nodes = [];
+}
 ---
 
 <CollectionLayout collection="musics">
@@ -18,18 +29,24 @@ const nodes: Music[] = await Promise.all(musics.map(preprocessMusic));
   </Introduction>
   <section class="section">
     {
-      nodes.map(
-        ({ title: name, date, opus, number, categories: category }: Music) => (
-          <article class="container content is-max-desktop">
-            <h2>
-              <a href={slugify(name)}>{name}</a>
-            </h2>
-            <p>
-              {category}，Op. {opus}, No. {number}
-            </p>
-            <p>{yymmdd(date)}</p>
-          </article>
+      nodes.length > 0 ? (
+        nodes.map(
+          ({ title: name, date, opus, number, categories: category }: Music) => (
+            <article class="container content is-max-desktop">
+              <h2>
+                <a href={slugify(name)}>{name}</a>
+              </h2>
+              <p>
+                {category}，Op. {opus}, No. {number}
+              </p>
+              <p>{yymmdd(date)}</p>
+            </article>
+          )
         )
+      ) : (
+        <div class="container content is-max-desktop">
+          <p>音乐集合正在建设中，请稍后再来查看。</p>
+        </div>
       )
     }
   </section>

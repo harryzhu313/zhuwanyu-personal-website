@@ -8,19 +8,38 @@ import { preprocessRecipe } from "../../content/config";
 import OrderForm from "../../islands/OrderForm";
 import { Image } from "astro:assets";
 
-const recipes = await getCollection("recipes");
-const nodes: Recipe[] = await Promise.all(recipes.map(preprocessRecipe));
+// 安全获取 recipes 集合
+let recipes;
+let nodes: Recipe[] = [];
+
+try {
+  recipes = await getCollection("recipes");
+  if (recipes && recipes.length > 0) {
+    nodes = await Promise.all(recipes.map(preprocessRecipe));
+  }
+} catch (error) {
+  console.error("获取 recipes 集合时出错:", error);
+  nodes = [];
+}
+
 const groups = ["鲁菜", "川菜", "粤菜", "淮扬菜", "面点", "异域风情"].map(
   (k) => ({
     title: k,
     dishes: [] as Recipe[],
   })
 );
-for (const dish of nodes) {
-  groups.find((x) => x.title === dish.categories[0])!.dishes.push(dish);
-}
-for (const { dishes } of groups) {
-  dishes.sort((a, b) => b.rating.length - a.rating.length);
+
+// 只有当有数据时才进行分组
+if (nodes.length > 0) {
+  for (const dish of nodes) {
+    const group = groups.find((x) => x.title === dish.categories[0]);
+    if (group) {
+      group.dishes.push(dish);
+    }
+  }
+  for (const { dishes } of groups) {
+    dishes.sort((a, b) => b.rating.length - a.rating.length);
+  }
 }
 ---
 
@@ -36,34 +55,42 @@ for (const { dishes } of groups) {
   </Introduction>
   <section class="section">
     {
-      groups.map(({ title, dishes }) => (
-        <article class="columns">
-          <div class="column is-one-quarter has-text-centered">
-            <div class="content">
-              <h3>{title}</h3>
-            </div>
-          </div>
-          <div class="column is-flex is-flex-wrap-wrap is-justify-content-center gap-1">
-            {dishes.map(({ title, image, rating }) => {
-              return (
-                <div class="box dish">
-                  <div class="dish-image">
-                    <a href={slugify(title)}>
-                      <!-- 所有图片现在都是本地化的，统一使用 Astro Image 组件 -->
-                      <Image width={180} height={180} class="fit" src={image} alt={title} />
-                    </a>
-                  </div>
-                  <div class="content">
-                    <p class="is-medium">{title}</p>
-                    <p class="is-small">{rating}</p>
-                    <Dish title={title} client:only/>
-                  </div>
+      nodes.length > 0 ? (
+        groups.map(({ title, dishes }) => (
+          dishes.length > 0 && (
+            <article class="columns">
+              <div class="column is-one-quarter has-text-centered">
+                <div class="content">
+                  <h3>{title}</h3>
                 </div>
-              );
-            })}
-          </div>
-        </article>
-      ))
+              </div>
+              <div class="column is-flex is-flex-wrap-wrap is-justify-content-center gap-1">
+                {dishes.map(({ title, image, rating }) => {
+                  return (
+                    <div class="box dish">
+                      <div class="dish-image">
+                        <a href={slugify(title)}>
+                          <!-- 所有图片现在都是本地化的，统一使用 Astro Image 组件 -->
+                          <Image width={180} height={180} class="fit" src={image} alt={title} />
+                        </a>
+                      </div>
+                      <div class="content">
+                        <p class="is-medium">{title}</p>
+                        <p class="is-small">{rating}</p>
+                        <Dish title={title} client:only/>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </article>
+          )
+        ))
+      ) : (
+        <div class="container content is-max-desktop">
+          <p>食谱集合正在建设中，请稍后再来查看。</p>
+        </div>
+      )
     }
   </section>
   <section class="section">
