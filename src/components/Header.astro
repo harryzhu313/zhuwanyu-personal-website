@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import collections, { title } from "..";
+import collections, { title } from ".."; // 导入分类src/index.ts和标题
 interface Props {
   collection?: string;
 }
@@ -37,8 +37,8 @@ interface Props {
     <div id="navbar-menu" class="navbar-menu">
       <div class="navbar-start ml-auto mr-0">
         {
-          Object.entries(collections)
-            .filter(([x]) => x !== "dresses")
+          Object.entries(collections) // 过滤掉不需要的分类
+            .filter(([x]) => !["dresses", "musics", "recipes"].includes(x))
             .map(([type, { name, icon }]) => (
               <a
                 href={`/${type}/`}
