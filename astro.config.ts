@@ -38,10 +38,20 @@ export default defineConfig({
     //   },
     // }),
   ],
-  // 使用 noop 服务来避免图片处理错误，但保留域名配置
+  // 恢复图片处理配置以支持 fileToImageAsset 功能
   image: {
     domains: ["**.amazonaws.com", "**.notion.so", "image.harryrou.wiki"],
-    service: { entrypoint: 'astro/assets/services/noop' },
+    remotePatterns: [
+      {
+        protocol: "https",
+      },
+    ],
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        limitInputPixels: false,
+      },
+    },
   },
   markdown: {
     remarkPlugins: [remarkMath],
