@@ -63,11 +63,11 @@ const photos = defineCollection({
   }),
 });
 
-// 临时创建空集合
-const videos = defineCollection({ loader: () => [], schema: z.any() });
-const musics = defineCollection({ loader: () => [], schema: z.any() });
-const recipes = defineCollection({ loader: () => [], schema: z.any() });
-const dresses = defineCollection({ loader: () => [], schema: z.any() });
+// 临时创建空集合 - 使用 Promise.resolve 确保 Netlify 构建兼容性
+const videos = defineCollection({ loader: () => Promise.resolve([]), schema: z.any() });
+const musics = defineCollection({ loader: () => Promise.resolve([]), schema: z.any() });
+const recipes = defineCollection({ loader: () => Promise.resolve([]), schema: z.any() });
+const dresses = defineCollection({ loader: () => Promise.resolve([]), schema: z.any() });
 
 export const collections = {
   articles,

@@ -39,7 +39,7 @@ export default defineConfig({
     // }),
   ],
   image: {
-    domains: ["**.amazonaws.com", "**.notion.so"], // 添加域名
+    domains: ["**.amazonaws.com", "**.notion.so", "image.harryrou.wiki"], // 添加域名
     remotePatterns: [ // 添加远程模式
       {
         protocol: "https", // 协议  
