@@ -38,19 +38,10 @@ export default defineConfig({
     //   },
     // }),
   ],
+  // 使用 noop 服务来避免图片处理错误，但保留域名配置
   image: {
-    domains: ["**.amazonaws.com", "**.notion.so", "image.harryrou.wiki"], // 添加域名
-    remotePatterns: [ // 添加远程模式
-      {
-        protocol: "https", // 协议  
-      },
-    ],
-    service: {
-      entrypoint: 'astro/assets/services/sharp',
-      config: {
-        limitInputPixels: false,
-      },
-    },
+    domains: ["**.amazonaws.com", "**.notion.so", "image.harryrou.wiki"],
+    service: { entrypoint: 'astro/assets/services/noop' },
   },
   markdown: {
     remarkPlugins: [remarkMath],
