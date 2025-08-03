@@ -1,7 +1,7 @@
 ---
 title: 浩瀚宇宙中，我是谁？我在哪？
 date: 2025-07-09
-categories: [杂感]
+categories: [阅读]
 cover: https://image.harryrou.wiki/2025-08-03-030138.jpg
 description: 《宇宙》——卡尔萨根，第一章读后感。
 ---
