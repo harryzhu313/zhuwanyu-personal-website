@@ -2,7 +2,7 @@
 title: 与ChatGPT协同阅读
 date: 2025-05-27
 categories: [阅读]
-cover: https://image.harryrou.wiki/2025-08-03-pdKIS1XC.jpg
+cover: https://image.harryrou.wiki/2025-08-03-yuanze.png
 description: ""
 ---
 
