@@ -8,39 +8,53 @@ const videos = [
     title: "涡街流量计",
     description: "这是给公司产品制作的 3D 宣传视频",
     thumbnail: "https://i.ytimg.com/vi/fK7JNBXE2Ig/hqdefault.jpg",
-    url: "https://www.youtube.com/watch?v=fK7JNBXE2Ig",
+    url: "https://www.youtube.com/embed/fK7JNBXE2Ig?si=NJ2fH_wc5urJYazN",
     date: "2024-06"
   },
   {
     title: "IO-Link 继电器模组",
     description: "产品拍摄练习",
     thumbnail: "https://i.ytimg.com/vi/az1d9-p9hNA/hqdefault.jpg",
-    url: "https://www.youtube.com/watch?v=az1d9-p9hNA",
+    url: "https://www.youtube.com/embed/az1d9-p9hNA?si=abc123def456",
     date: "2021-08"
   },
   {
     title: "测试视频",
     description: "分享一些编程心得",
-    thumbnail: "https://via.placeholder.com/300x200?text=Tech+Talk",
-    url: "https://www.youtube.com/watch?v=example",
+    thumbnail: "https://i.ytimg.com/vi/XcUcA86NkOE/hqdefault.jpg",
+    url: "https://www.youtube.com/embed/XcUcA86NkOE?si=pdYn0aL5eTAMa7Su",
     date: "2024-03"
   },
   {
     title: "测试",
     description: "分享一些编程心得",
     thumbnail: "https://via.placeholder.com/300x200?text=Tech+Talk",
-    url: "https://www.youtube.com/watch?v=example",
+    url: "https://www.youtube.com/embed/example?si=ghi345jkl678",
     date: "2024-03"
   },
   {
     title: "测试",
     description: "分享一些编程心得",
     thumbnail: "https://via.placeholder.com/300x200?text=Tech+Talk",
-    url: "https://www.youtube.com/watch?v=example",
+    url: "https://www.youtube.com/embed/example?si=mno901pqr234",
     date: "2024-03"
   },
   // 在这里继续添加更多视频...
 ];
+
+// 将YouTube URL转换为嵌入URL的函数
+function getEmbedUrl(url: string): string {
+  // 处理标准YouTube链接
+  if (url.includes('youtube.com/watch?v=')) {
+    const videoId = url.split('v=')[1]?.split('&')[0];
+    return videoId ? `https://www.youtube.com/embed/${videoId}?si=NJ2fH_wc5urJYazN` : ''; // 这里需要修改，如果是嵌入链接直接返回嵌入链接，但如果是 YouTube URL，还需要对 si 参数进行处理
+  }
+  // 处理你提供的完整嵌入链接格式
+  if (url.includes('youtube.com/embed/')) {
+    return url;
+  }
+  return '';
+}
 ---
 
 <CollectionLayout collection="videos">
@@ -56,32 +70,54 @@ const videos = [
   <section class="section">
     <div class="container is-max-desktop">
       <div class="video-grid">
-        {videos.map((video) => (
-          <div class="video-card">
-            <a href={video.url} target="_blank" rel="noopener noreferrer">
-              <div class="video-thumbnail">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title}
-                  onerror="this.src='https://via.placeholder.com/400x225/cccccc/666666?text=视频封面'"
-                />
-                <div class="play-button">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M8 5v14l11-7z" fill="currentColor"/>
-                  </svg>
-                </div>
+        {videos.map((video, index) => (
+          <div class="video-card" data-video-url={getEmbedUrl(video.url)} data-video-title={video.title}>
+            <div class="video-thumbnail">
+              <img 
+                src={video.thumbnail} 
+                alt={video.title}
+                onerror="this.src='https://via.placeholder.com/400x225/cccccc/666666?text=视频封面'"
+              />
+              <div class="play-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M8 5v14l11-7z" fill="currentColor"/>
+                </svg>
               </div>
-              <div class="video-info">
-                <h3 class="video-title">{video.title}</h3>
-                <p class="video-description">{video.description}</p>
-                <span class="video-date">{video.date}</span>
-              </div>
-            </a>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">{video.title}</h3>
+              <p class="video-description">{video.description}</p>
+              <span class="video-date">{video.date}</span>
+            </div>
           </div>
         ))}
       </div>
     </div>
   </section>
+
+  <!-- 视频播放弹窗 -->
+  <div id="videoModal" class="video-modal">
+    <div class="modal-content">
+      <button class="close-button" id="closeVideoButton">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="modal-body">
+        <iframe 
+          id="videoFrame"
+          width="100%" 
+          height="100%" 
+          src="" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
 </CollectionLayout>
 
 <style>
@@ -108,12 +144,8 @@ const videos = [
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.video-card a {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  text-decoration: none;
-  color: inherit;
+.video-card {
+  cursor: pointer;
 }
 
 .video-thumbnail {
@@ -231,4 +263,163 @@ const videos = [
     padding: 1rem;
   }
 }
+
+/* 视频弹窗样式 */
+.video-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  position: relative;
+  background-color: black;
+  margin: 2% auto;
+  padding: 0;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #e74c3c;
+}
+
+.modal-body {
+  padding: 0;
+  background: black;
+  height: 100%;
+}
+
+.modal-body iframe {
+  display: block;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+    background-color: black;
+  }
+  
+  .close-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    margin: 5% auto;
+    aspect-ratio: 16/9;
+  }
+  
+  .modal-body iframe {
+    height: 100%;
+  }
+}
 </style>
+
+<script>
+// 打开视频弹窗
+function openVideoModal(embedUrl: string, title: string): void {
+  const modal = document.getElementById('videoModal');
+  const videoFrame = document.getElementById('videoFrame') as HTMLIFrameElement;
+  
+  if (embedUrl && embedUrl !== 'https://www.youtube.com/embed/' && modal && videoFrame) {
+    videoFrame.src = embedUrl;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // 防止背景滚动
+  }
+}
+
+// 关闭视频弹窗
+function closeVideoModal(): void {
+  const modal = document.getElementById('videoModal');
+  const videoFrame = document.getElementById('videoFrame') as HTMLIFrameElement;
+  
+  if (modal && videoFrame) {
+    modal.style.display = 'none';
+    videoFrame.src = ''; // 停止视频播放
+    document.body.style.overflow = 'auto'; // 恢复背景滚动
+  }
+}
+
+// 点击弹窗背景关闭弹窗
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('videoModal');
+  const closeButton = document.getElementById('closeVideoButton');
+  
+  // 为所有视频卡片添加点击事件
+  const videoCards = document.querySelectorAll('.video-card');
+  videoCards.forEach(card => {
+    card.addEventListener('click', function(this: HTMLElement) {
+      const videoUrl = this.getAttribute('data-video-url');
+      const videoTitle = this.getAttribute('data-video-title');
+      if (videoUrl && videoTitle) {
+        openVideoModal(videoUrl, videoTitle);
+      }
+    });
+  });
+  
+  // 为关闭按钮添加点击事件
+  if (closeButton) {
+    closeButton.addEventListener('click', function() {
+      closeVideoModal();
+    });
+  }
+  
+  if (modal) {
+    modal.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        closeVideoModal();
+      }
+    });
+  }
+  
+  // ESC键关闭弹窗
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeVideoModal();
+    }
+  });
+});
+
+// 全局声明，确保TypeScript知道这些函数
+declare global {
+  function openVideoModal(embedUrl: string, title: string): void;
+  function closeVideoModal(): void;
+}
+</script>
