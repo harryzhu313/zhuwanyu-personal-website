@@ -29,6 +29,7 @@
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.4.1",
     "@cloudflare/stream-react": "^1.9.3",
+    "@iconify-json/fa6-brands": "^1.2.6",
     "@iconify-json/fa6-solid": "^1.2.3",
     "@octokit/request": "^10.0.2",
     "@supabase/supabase-js": "^2.53.0",
