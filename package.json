@@ -20,6 +20,7 @@
     "start-dev": "node scripts/smart-dev.mjs",
     "pre-deploy": "node scripts/pre-deploy-check.mjs",
     "verify-prod": "node scripts/verify-production-setup.mjs",
+    "keep-alive": "node scripts/keep-supabase-alive.mjs",
     "postinstall": "node scripts/check-api-setup.mjs || true"
   },
   "dependencies": {
