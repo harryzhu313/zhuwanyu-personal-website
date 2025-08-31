@@ -22,8 +22,12 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function keepAlive() {
+  const timestamp = new Date().toISOString();
+  const beijingTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  
   try {
-    console.log('🔄 正在进行保活检查...');
+    console.log(`🔄 [${beijingTime}] 开始保活检查...`);
+    console.log(`📍 项目URL: ${supabaseUrl}`);
     
     // 简单查询以保持连接活跃
     const { data, error } = await supabase
@@ -32,12 +36,16 @@ async function keepAlive() {
       .limit(1);
     
     if (error) {
-      console.error('❌ 保活失败:', error.message);
+      console.error(`❌ [${beijingTime}] 保活失败:`, error.message);
+      process.exit(1); // 让 GitHub Actions 知道失败了
     } else {
-      console.log('✅ 保活成功! 数据库连接正常');
+      console.log(`✅ [${beijingTime}] 保活成功! 数据库连接正常`);
+      console.log(`📊 查询结果:`, data);
+      console.log(`🎯 下次保活时间: 明天同一时间`);
     }
   } catch (error) {
-    console.error('❌ 保活过程出错:', error.message);
+    console.error(`❌ [${beijingTime}] 保活过程出错:`, error.message);
+    process.exit(1);
   }
 }
 

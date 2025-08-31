@@ -28,3 +28,10 @@ jobs:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       run: npm run keep-alive
+    
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "⚠️ Supabase 保活失败!"
+        echo "请检查 GitHub Actions 日志获取详细信息"
+        echo "访问: https://github.com/${{ github.repository }}/actions"
