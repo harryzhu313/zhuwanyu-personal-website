@@ -43,42 +43,25 @@ $$σ(w_1a_1+w_2a_2+w_3a_3+...+w_na_n+b_0)$$
 
 刚刚我们知道了一个神经元激活值的函数，但是对于神经网络来说更加简洁的写法是：
 
-$$ neural network（function） = σ(\begin{bmatrix}
-
-w_0,_0 w_0,_1...w_0,_n \\
-
-w_1,_0 w_1,_1...w_1,_n \\
-
-.\\
-.\\
-.\\
-w_k,_0 w_k,_1...w_k,_n 
-
-\end{bmatrix} * \begin{bmatrix}
-
-a_0(^0)\\
-a_1(^0)\\
-.\\
-.\\
-.\\
-a_n(^0)\\
-\end{bmatrix} + \begin{bmatrix}
-b_0\\
-b_1\\
-.\\
-.\\
-.\\
+$$\text{Neural network (function)} = \sigma\!\left(\begin{bmatrix}
+w_{0,0} & w_{0,1} & \cdots & w_{0,n} \\
+w_{1,0} & w_{1,1} & \cdots & w_{1,n} \\
+\vdots & \vdots & \ddots & \vdots \\
+w_{k,0} & w_{k,1} & \cdots & w_{k,n}
+\end{bmatrix}
+\begin{bmatrix}
+a_0^{(0)} \\
+a_1^{(0)} \\
+\vdots \\
+a_n^{(0)}
+\end{bmatrix}
+\; + \;
+\begin{bmatrix}
+b_0 \\
+b_1 \\
+\vdots \\
 b_n
-\end{bmatrix}= \begin{bmatrix}
-?\\
-?\\
-.\\
-.\\
-.\\
-?\\
-
-
-\end{bmatrix})$$
+\end{bmatrix}\right)$$
 
 ## 神经网络如何识别图像？
 
