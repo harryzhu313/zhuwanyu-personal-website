@@ -1,7 +1,7 @@
 ---
 title: 长安的荔枝
 date: 2025-07-25
-categories: [电影]
+categories: [电影赏析]
 cover: https://image.harryrou.wiki/2025-07-25-CleanShot%202025-07-25%20at%2013.57.15%402x.png
 description: 长安的荔枝观后感
 ---
