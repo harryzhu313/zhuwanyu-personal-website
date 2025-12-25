@@ -10,42 +10,23 @@ import {
 } from "notion-astro-loader/schemas";
 import type { Dress, Music, Photo, Recipe, Video } from "..";
 import exifr from "exifr";
-import type { ExifData } from "../components/ExifImage.astro";
 
-/**
- * 清理和验证图片 URL
- * 处理被截断或格式错误的 Notion 图片 URL
- */
-function sanitizeImageUrl(src: string | null | undefined): string | null {
-  if (!src || typeof src !== 'string') {
-    console.warn('⚠️ URL 为空或类型错误');
-    return null;
-  }
-  
-  // 去除首尾空白字符
-  let cleaned = src.trim();
-  
-  // 移除尾部的多余 & 符号（这是导致构建失败的主要原因）
-  cleaned = cleaned.replace(/&+$/, '');
-  
-  // 移除尾部的其他可疑字符
-  cleaned = cleaned.replace(/[?&]+$/, '');
-  
-  // 验证是否为有效 URL
-  try {
-    const urlObj = new URL(cleaned);
-    
-    // 确保协议是 http 或 https
-    if (!['http:', 'https:'].includes(urlObj.protocol)) {
-      console.warn(`⚠️ 不支持的协议: ${urlObj.protocol}`);
-      return null;
-    }
-    
-    return cleaned;
-  } catch (err) {
-    console.error(`❌ URL 格式无效: ${cleaned.substring(0, 60)}...`);
-    return null;
-  }
+// EXIF 数据类型定义（与 ExifImage.astro 保持一致）
+interface ExifData {
+  DateTimeOriginal?: string;
+  LensMake?: string;
+  LensModel?: string;
+  FocalLength?: number;
+  ISO?: number;
+  FNumber?: number;
+  ExposureTime?: number;
+  ExposureBiasValue?: number;
+  GPSLatitudeRef?: string;
+  GPSLatitude?: [number, number, number];
+  GPSLongitudeRef?: string;
+  GPSLongitude?: [number, number, number];
+  Make?: string;
+  Model?: string;
 }
 
 const articles = defineCollection({
@@ -145,35 +126,22 @@ export const preprocessPhoto = async (entry: Entry<"photos">): Promise<Photo | n
     image = imageAsset.src;
     console.log(`✅ 本地化成功: ${entry.data.properties.Name} -> ${image.includes('_astro') ? '本地' : 'dev代理'}`);
   } catch (error) {
-    const rawUrl = fileToUrl(entry.data.cover);
-    // 清理和验证 URL
-    const remoteUrl = sanitizeImageUrl(rawUrl);
-    
+    const remoteUrl = fileToUrl(entry.data.cover);
     console.error(`❌ 图片本地化失败: ${entry.data.properties.Name}`);
-    console.error(`   远程URL: ${remoteUrl?.substring(0, 100) || '无效'}...`);
+    console.error(`   远程URL: ${remoteUrl.substring(0, 100)}...`);
     console.error(`   错误信息: ${error instanceof Error ? error.message : String(error)}`);
     
-    // 检查是否是 URL 过期或格式错误问题
+    // 检查是否是 URL 过期问题
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (errorMessage.includes('403') || errorMessage.includes('expired')) {
       console.error(`🚨 Notion URL 已过期！请执行以下操作之一:`);
       console.error(`   1. 运行 npm run fresh-build（推荐）`);
       console.error(`   2. 在 Notion 中重新编辑此页面以刷新 URL`);
       console.error(`   3. 重新上传图片到 Notion`);
-    } else if (errorMessage.includes('Failed to parse image reference') || !remoteUrl) {
-      console.error(`🚨 图片 URL 格式错误或已损坏！`);
-      console.error(`   原始URL: ${rawUrl?.substring(0, 100)}...`);
-      console.error(`   请在 Notion 中重新上传此图片`);
     }
     
-    // 使用清理后的远程 URL 作为回退（如果为 null 则使用占位符）
-    image = remoteUrl || rawUrl || '';
-    
-    // 如果 URL 无效，跳过此照片
-    if (!remoteUrl) {
-      console.error(`⚠️ 跳过照片 "${entry.data.properties.Name}"：URL 无效`);
-      return null;
-    }
+    // 使用远程 URL 作为回退（即使可能过期）
+    image = remoteUrl;
   }
   
   let exif: Partial<ExifData> = {};
@@ -182,13 +150,7 @@ export const preprocessPhoto = async (entry: Entry<"photos">): Promise<Photo | n
   // 优先级1: 尝试从 EXIF 获取拍摄时间
   try {
     // 对于 EXIF 解析，我们使用原始的远程 URL，因为本地化的图片可能没有EXIF信息
-    const rawImageUrl = fileToUrl(entry.data.cover);
-    const imageUrl = sanitizeImageUrl(rawImageUrl);
-    
-    if (!imageUrl) {
-      throw new Error('URL 格式无效，无法解析 EXIF');
-    }
-    
+    const imageUrl = fileToUrl(entry.data.cover);
     const parsedExif = await exifr.parse(imageUrl, true);
     if (parsedExif) {
       exif = parsedExif as ExifData;

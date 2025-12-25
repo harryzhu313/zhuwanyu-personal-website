@@ -178,15 +178,11 @@ async function isUrlAccessible(url: string): Promise<boolean> {
  * @returns 本地化的图片信息
  */
 export async function localizeNotionImage(notionFile: any): Promise<LocalizedImage> {
-  const rawUrl = fileToUrl(notionFile);
+  const originalUrl = fileToUrl(notionFile);
   const fileId = getNotionFileId(notionFile);
   
-  // 清理和验证 URL
-  const originalUrl = sanitizeImageUrl(rawUrl);
-  
   if (!originalUrl) {
-    console.error(`❌ URL 无效或已损坏: ${rawUrl?.substring(0, 60)}...`);
-    throw new Error('无法获取有效的图片URL');
+    throw new Error('无法获取图片URL');
   }
 
   console.log(`🔄 开始处理图片: ${fileId}`);
