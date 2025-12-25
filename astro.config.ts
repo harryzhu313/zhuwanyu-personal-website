@@ -6,6 +6,7 @@ import AstroPWA from "@vite-pwa/astro";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import { description, site, title } from "./src";
+import remarkImagesToHtml from "./src/utils/remark-images-to-html.mjs";
 
 export default defineConfig({
   site,
@@ -54,7 +55,10 @@ export default defineConfig({
     },
   },
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [
+      remarkImagesToHtml,  // 关键修复：将图片转为 HTML，绕过 Astro 5.x 的图片优化 bug
+      remarkMath
+    ],
     rehypePlugins: [
       [
         rehypeKatex,
