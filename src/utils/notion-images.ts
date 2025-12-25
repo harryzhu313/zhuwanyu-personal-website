@@ -9,6 +9,43 @@ export interface LocalizedImage {
   cached: boolean;
 }
 
+/**
+ * 清理和验证图片 URL
+ * 处理被截断或格式错误的 Notion 图片 URL
+ */
+function sanitizeImageUrl(src: string | null | undefined): string | null {
+  if (!src || typeof src !== 'string') {
+    console.warn('⚠️ URL 为空或类型错误');
+    return null;
+  }
+  
+  // 去除首尾空白字符
+  let cleaned = src.trim();
+  
+  // 移除尾部的多余 & 符号（这是导致构建失败的主要原因）
+  cleaned = cleaned.replace(/&+$/, '');
+  
+  // 移除尾部的其他可疑字符
+  cleaned = cleaned.replace(/[?&]+$/, '');
+  
+  // 验证是否为有效 URL
+  try {
+    const urlObj = new URL(cleaned);
+    
+    // 确保协议是 http 或 https
+    if (!['http:', 'https:'].includes(urlObj.protocol)) {
+      console.warn(`⚠️ 不支持的协议: ${urlObj.protocol}`);
+      return null;
+    }
+    
+    console.log(`✅ URL 清理成功: ${cleaned.substring(0, 60)}...`);
+    return cleaned;
+  } catch (err) {
+    console.error(`❌ URL 格式无效: ${cleaned.substring(0, 60)}...`, err);
+    return null;
+  }
+}
+
 // 缓存目录 - 记录成功本地化的图片信息
 const CACHE_DIR = './public/cached-images';
 const CACHE_MANIFEST_FILE = './public/cached-images/manifest.json';
@@ -141,11 +178,15 @@ async function isUrlAccessible(url: string): Promise<boolean> {
  * @returns 本地化的图片信息
  */
 export async function localizeNotionImage(notionFile: any): Promise<LocalizedImage> {
-  const originalUrl = fileToUrl(notionFile);
+  const rawUrl = fileToUrl(notionFile);
   const fileId = getNotionFileId(notionFile);
   
+  // 清理和验证 URL
+  const originalUrl = sanitizeImageUrl(rawUrl);
+  
   if (!originalUrl) {
-    throw new Error('无法获取图片URL');
+    console.error(`❌ URL 无效或已损坏: ${rawUrl?.substring(0, 60)}...`);
+    throw new Error('无法获取有效的图片URL');
   }
 
   console.log(`🔄 开始处理图片: ${fileId}`);
