@@ -6,7 +6,6 @@ import AstroPWA from "@vite-pwa/astro";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import { description, site, title } from "./src";
-import remarkSanitizeImageUrls from "./src/utils/remark-sanitize-image-urls.mjs";
 
 export default defineConfig({
   site,
@@ -55,7 +54,7 @@ export default defineConfig({
     },
   },
   markdown: {
-    remarkPlugins: [remarkSanitizeImageUrls, remarkMath],
+    remarkPlugins: [remarkMath],
     rehypePlugins: [
       [
         rehypeKatex,
