@@ -10,24 +10,8 @@ import {
 } from "notion-astro-loader/schemas";
 import type { Dress, Music, Photo, Recipe, Video } from "..";
 import exifr from "exifr";
-
-// EXIF 数据类型定义（与 ExifImage.astro 保持一致）
-interface ExifData {
-  DateTimeOriginal?: string;
-  LensMake?: string;
-  LensModel?: string;
-  FocalLength?: number;
-  ISO?: number;
-  FNumber?: number;
-  ExposureTime?: number;
-  ExposureBiasValue?: number;
-  GPSLatitudeRef?: string;
-  GPSLatitude?: [number, number, number];
-  GPSLongitudeRef?: string;
-  GPSLongitude?: [number, number, number];
-  Make?: string;
-  Model?: string;
-}
+// @ts-ignore - Astro 支持从 .astro 文件导入类型，但 IDE 可能报错
+import type { ExifData } from "../components/ExifImage.astro";
 
 const articles = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./articles" }),
