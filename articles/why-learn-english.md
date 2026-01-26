@@ -3,7 +3,7 @@ title: AI 时代，孩子还要不要学英语？
 date: 2026-01-20
 categories: [AI 育儿]
 cover: https://image.harryrou.wiki/2026-01-20-Gemini_Generated_Image_sz6fdasz6fdasz6f.jpg
-description: 
+description: ""
 ---
 
 本文的参考书籍为《内驱式学习》，通过向小能熊 ima 知识库提问获得初稿大纲，再用自己的话整理为文章。
