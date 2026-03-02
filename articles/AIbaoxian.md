@@ -1,5 +1,5 @@
 ---
-title: 《温故一九四二》读后感
+title: 最贵的就是最好的吗？
 date: 2026-03-01
 categories: [杂感]
 cover: https://image.harryrou.wiki/2026-03-01-Gemini_Generated_Image_umkbjkumkbjkumkb.jpg
